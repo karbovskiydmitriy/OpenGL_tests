@@ -1,0 +1,10 @@
+package shaders;
+
+public enum ShaderType {
+	NONE,
+	VERTEX_SHADER,
+	GEOMETRYR_SHADER,
+	TESSELATION_SHADER,
+	FRAGMENT_SHADER,
+	COMPUTE_SHADER
+}

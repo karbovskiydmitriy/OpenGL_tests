@@ -1,0 +1,9 @@
+{
+	"moveSpeed" : 50,
+	"turnSpeed" : 2,
+	"sensorLength" : 20,
+	"sensorSize" : 1,
+	"sensorAngle": 0.5,
+	"fadeRate" : 5,
+	"diffuseRate" : 0.02
+}
