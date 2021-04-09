@@ -1,9 +1,8 @@
 package compute;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+
+import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -92,14 +91,14 @@ public class FireworkTest {
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, dimension.width, dimension.height);
 
 		fireworkComputeProgram = glCreateProgram();
-		fireworkComputeShader = loadShader(".\\shaders\\compute_particles_firework.glsl", GL_COMPUTE_SHADER);
+		fireworkComputeShader = Shader.loadShader(".\\shaders\\compute_particles_firework.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(fireworkComputeProgram, fireworkComputeShader);
 		glLinkProgram(fireworkComputeProgram);
 		glUseProgram(fireworkComputeProgram);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, particlesBuffer);
 		
 		blurComputeProgram = glCreateProgram();
-		blurComputeShader = loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
+		blurComputeShader = Shader.loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(blurComputeProgram, blurComputeShader);
 		glLinkProgram(blurComputeProgram);
 
@@ -120,9 +119,10 @@ public class FireworkTest {
 		glDispatchCompute(particlesCount / 32 + 1, 1, 1);
 
 		glUseProgram(blurComputeProgram);
-		glUniform1i(1, 1);
-		glUniform1f(2, 0.7f);
-		glUniform1f(3, delta);
+		glUniform1f(1, delta);
+		glUniform1i(2, 1);
+		glUniform1f(3, 5f);
+		glUniform1f(4, 0.001f);
 
 		glBindImageTexture(0, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 		
@@ -141,29 +141,6 @@ public class FireworkTest {
 		glTexCoord2f(1, 1);
 		glVertex2i(1, -1);
 		glEnd();
-	}
-
-	private static int loadShader(String fileName, int shaderType) {
-		try {
-			String shaderText = new String(Files.readAllBytes(new File(fileName).toPath()));
-			int shader = glCreateShader(shaderType);
-			glShaderSource(shader, shaderText);
-			glCompileShader(shader);
-
-			int[] compiled = new int[1];
-			glGetShaderiv(shader, GL_COMPILE_STATUS, compiled);
-
-			if (compiled[0] != 0) {
-				return shader;
-			} else {
-				System.out.println(glGetShaderInfoLog(shader));
-				glDeleteShader(shader);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
 	}
 
 }

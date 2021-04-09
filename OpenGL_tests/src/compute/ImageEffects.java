@@ -1,10 +1,8 @@
 package compute;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
+import shaders.Shader;
 import types.Image;
 
 import static org.lwjgl.opengl.GL.*;
@@ -80,7 +78,7 @@ public class ImageEffects {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		computeProgram = glCreateProgram();
-		computeShader = loadShader(".\\shaders\\compute_effects.glsl", GL_COMPUTE_SHADER);
+		computeShader = Shader.loadShader(".\\shaders\\compute_effects.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(computeProgram, computeShader);
 		glLinkProgram(computeProgram);
 		glUseProgram(computeProgram);
@@ -112,27 +110,6 @@ public class ImageEffects {
 		glTexCoord2f(1, 1);
 		glVertex2i(1, -1);
 		glEnd();
-	}
-
-	private static int loadShader(String fileName, int shaderType) {
-		try {
-			String shaderText = new String(Files.readAllBytes(new File(fileName).toPath()));
-			int shader = glCreateShader(shaderType);
-			glShaderSource(shader, shaderText);
-			glCompileShader(shader);
-
-			if (glGetShaderi(shader, GL_COMPILE_STATUS) != 0) {
-				return shader;
-			} else {
-				System.out.println(glGetShaderInfoLog(shader));
-				
-				glDeleteShader(shader);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
 	}
 
 }

@@ -1,10 +1,16 @@
 {
-	"moveSpeed" : 22,
-	"turnSpeed" : -8,
-	"sensorLength" : 32,
-	"sensorSize" : 2,
-	"sensorAngle": 1,
-	"fadeRate" : 8,
-	"diffuseRate" : 0.0001,
-	"stepsPerFrame" : 1
+	"color" : {
+		"red" : 30,
+		"green" : 60,
+		"blue" : 200,
+		"alpha" : 255
+	},
+	"moveSpeed" : 20,
+	"turnSpeed" : 4.3,
+	"sensorLength" : 20,
+	"sensorSize" : 1,
+	"sensorAngle": 0.6,
+	"fadeRate" : 15,
+	"diffuseRate" : 0.0012,
+	"stepsPerFrame" : 3
 }

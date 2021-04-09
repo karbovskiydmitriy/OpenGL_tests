@@ -1,15 +1,12 @@
 package compute;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 
-import com.google.gson.Gson;
-
 import misc.*;
+import shaders.Shader;
+import types.Json;
 
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -67,7 +64,7 @@ public class AntTrailsTest {
 		glfwGetWindowSize(window, windowWidht, windowHeight);
 		windowSize = new Dimension(windowWidht[0], windowHeight[0]);
 		float k = 2;
-		imageSize = new Dimension((int)(windowWidht[0] * k), (int)(windowHeight[0] * k));
+		imageSize = new Dimension((int) (windowWidht[0] * k), (int) (windowHeight[0] * k));
 
 		lastTime = System.currentTimeMillis();
 		isRunning = false;
@@ -97,6 +94,9 @@ public class AntTrailsTest {
 		double circleRadius = 0.3;
 		float aspect = (float) windowSize.height / windowSize.width;
 
+		antSpecie = Json.load(".\\configs\\ants.json", AntSpecie.class);
+		System.out.println(antSpecie);
+
 		particles = new float[particlesCount * 8];
 		for (int i = 0; i < particlesCount * 8;) {
 			double circleAngle = Math.random() * Math.PI * 2;
@@ -105,25 +105,12 @@ public class AntTrailsTest {
 			particles[i++] = (float) (0.5 + (Math.sin(circleAngle) * rad) / aspect);
 			particles[i++] = (float) (Math.random() * Math.PI * 2);
 			particles[i++] = 1.0f;
-			particles[i++] = 1.0f;
-			particles[i++] = 0.15f;
-			particles[i++] = 0.3f;
-			particles[i++] = 1.0f;
+			particles[i++] = antSpecie.color.getRed() / 255.0f;
+			particles[i++] = antSpecie.color.getGreen() / 255.0f;
+			particles[i++] = antSpecie.color.getBlue() / 255.0f;
+			particles[i++] = antSpecie.color.getAlpha() / 255.0f;
 		}
 
-		String text = "";
-		
-		try {
-			byte[] data = Files.readAllBytes(new File(".\\configs\\ants.json").toPath());
-			text = new String(data);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		
-		antSpecie = new Gson().fromJson(text, AntSpecie.class);
-		
-		System.out.println(antSpecie);
-		
 		particlesBuffer = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, particlesBuffer);
 		glBufferData(GL_ARRAY_BUFFER, particles, GL_DYNAMIC_DRAW);
@@ -133,14 +120,14 @@ public class AntTrailsTest {
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, imageSize.width, imageSize.height);
 
 		fireworkComputeProgram = glCreateProgram();
-		fireworkComputeShader = loadShader(".\\shaders\\compute_ant_trails.glsl", GL_COMPUTE_SHADER);
+		fireworkComputeShader = Shader.loadShader(".\\shaders\\compute_ant_trails.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(fireworkComputeProgram, fireworkComputeShader);
 		glLinkProgram(fireworkComputeProgram);
 		glUseProgram(fireworkComputeProgram);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, particlesBuffer);
 
 		blurComputeProgram = glCreateProgram();
-		blurComputeShader = loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
+		blurComputeShader = Shader.loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(blurComputeProgram, blurComputeShader);
 		glLinkProgram(blurComputeProgram);
 	}
@@ -151,7 +138,7 @@ public class AntTrailsTest {
 		lastTime = currentTime;
 
 		glUseProgram(fireworkComputeProgram);
-		glUniform1f(0, delta); // delta
+		glUniform1f(0, delta / (isRunning ? antSpecie.stepsPerFrame : 1)); // delta
 		glUniform1i(1, particlesCount); // count
 		glUniform1f(2, antSpecie.moveSpeed); // moveSpeed
 		glUniform1f(3, antSpecie.sensorLength); // sensorLength
@@ -166,7 +153,7 @@ public class AntTrailsTest {
 
 		if (isRunning) {
 			glUseProgram(blurComputeProgram);
-			glUniform1f(1, delta); // delta
+			glUniform1f(1, delta / (isRunning ? antSpecie.stepsPerFrame : 1)); // delta
 			glUniform1i(2, 1); // kernelSize
 			glUniform1f(3, antSpecie.fadeRate); // fadeRate
 			glUniform1f(4, antSpecie.diffuseRate); // diffuseRate
@@ -190,29 +177,6 @@ public class AntTrailsTest {
 		glTexCoord2f(1, 1);
 		glVertex2i(1, -1);
 		glEnd();
-	}
-
-	private static int loadShader(String fileName, int shaderType) {
-		try {
-			String shaderText = new String(Files.readAllBytes(new File(fileName).toPath()));
-			int shader = glCreateShader(shaderType);
-			glShaderSource(shader, shaderText);
-			glCompileShader(shader);
-
-			int[] compiled = new int[1];
-			glGetShaderiv(shader, GL_COMPILE_STATUS, compiled);
-
-			if (compiled[0] != 0) {
-				return shader;
-			} else {
-				System.out.println(glGetShaderInfoLog(shader));
-				glDeleteShader(shader);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
 	}
 
 }

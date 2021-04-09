@@ -1,9 +1,8 @@
 package compute;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+
+import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -57,7 +56,7 @@ public class MyFirstComputeShaderTest {
 	    glBindTexture(GL_TEXTURE_2D, image);
 	    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, dimension.width, dimension.height);
 		
-		computeShader = loadShader(".\\shaders\\compute_first.glsl", GL_COMPUTE_SHADER);
+		computeShader = Shader.loadShader(".\\shaders\\compute_first.glsl", GL_COMPUTE_SHADER);
 		computeProgram = glCreateProgram();
 		glAttachShader(computeProgram, computeShader);
 		glLinkProgram(computeProgram);
@@ -79,28 +78,6 @@ public class MyFirstComputeShaderTest {
 		glTexCoord2f(1, 0);
 		glVertex2i(1, -1);
 		glEnd();
-	}
-
-	private static int loadShader(String fileName, int shaderType) {
-		try {
-			String shaderText = new String(Files.readAllBytes(new File(fileName).toPath()));
-			int shader = glCreateShader(shaderType);
-			glShaderSource(shader, shaderText);
-			glCompileShader(shader);
-
-			int[] compiled = new int[1];
-			glGetShaderiv(shader, GL_COMPILE_STATUS, compiled);
-
-			if (compiled[0] != 0) {
-				return shader;
-			} else {
-				glDeleteShader(shader);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
 	}
 
 }

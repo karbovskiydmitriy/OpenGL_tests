@@ -1,9 +1,8 @@
 package compute;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+
+import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -83,8 +82,8 @@ public class ParticlesTest {
 		image = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, image);
 		
-		particlesVertexShader = loadShader(".\\shaders\\vertex_particles.glsl", GL_VERTEX_SHADER);
-		particlesFragmentShader = loadShader(".\\shaders\\fragment_particles.glsl", GL_FRAGMENT_SHADER);
+		particlesVertexShader = Shader.loadShader(".\\shaders\\vertex_particles.glsl", GL_VERTEX_SHADER);
+		particlesFragmentShader = Shader.loadShader(".\\shaders\\fragment_particles.glsl", GL_FRAGMENT_SHADER);
 		particlesProgram = glCreateProgram();
 		glAttachShader(particlesProgram, particlesVertexShader);
 		glAttachShader(particlesProgram, particlesFragmentShader);
@@ -108,29 +107,6 @@ public class ParticlesTest {
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-	}
-
-	private static int loadShader(String fileName, int shaderType) {
-		try {
-			String shaderText = new String(Files.readAllBytes(new File(fileName).toPath()));
-			int shader = glCreateShader(shaderType);
-			glShaderSource(shader, shaderText);
-			glCompileShader(shader);
-
-			int[] compiled = new int[1];
-			glGetShaderiv(shader, GL_COMPILE_STATUS, compiled);
-
-			if (compiled[0] != 0) {
-				return shader;
-			} else {
-				System.out.println(glGetShaderInfoLog(shader));
-				glDeleteShader(shader);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return 0;
 	}
 
 }

@@ -34,7 +34,7 @@ public class DrawTextureTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1024, 11024280, "Compute shader example", NULL, NULL);
+		window = glfwCreateWindow(1280, 1024, "Compute shader example", NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
