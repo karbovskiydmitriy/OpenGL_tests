@@ -26,7 +26,7 @@ layout(location = 3) uniform float sensorLength;
 layout(location = 4) uniform int sensorSize;
 layout(location = 5) uniform float turnSpeed;
 layout(location = 6) uniform float sensorAngle;
-layout(location = 7) uniform int isRunning;
+layout(location = 7) uniform int stepsPerFrame;
 
 ivec2 size;
 
@@ -149,12 +149,19 @@ void main(void)
 	
 	if (id < count)
 	{
-		if (isRunning == 1)
+		if (stepsPerFrame > 0)
 		{
-			move(id);
-			turn(id);
-			collide(id);
+			for (int i = 0; i < stepsPerFrame; i++)
+			{
+				move(id);
+				turn(id);
+				collide(id);
+				draw(id);
+			}
 		}
-		draw(id);
+		else
+		{
+			draw(id);
+		}
 	}
 }

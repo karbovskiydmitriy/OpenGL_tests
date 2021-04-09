@@ -28,12 +28,13 @@ public class AntSpecie implements Serializable {
 	public float sensorAngle;
 	public float fadeRate;
 	public float diffuseRate;
+	public int stepsPerFrame;
 
 	@Override
 	public String toString() {
 		return String.format(
-				"String { moveSpeed = %f, turnSpeed = %f, sensorLength = %f, sensorSize = %d, sensorAngle = %f, fadeRate = %f, diffuseRate = %f}",
-				moveSpeed, turnSpeed, sensorLength, sensorSize, sensorAngle, fadeRate, diffuseRate);
+				"AntSpecie { moveSpeed = %f, turnSpeed = %f, sensorLength = %f, sensorSize = %d, sensorAngle = %f, fadeRate = %f, diffuseRate = %f, stepsPerFrame = %d}",
+				moveSpeed, turnSpeed, sensorLength, sensorSize, sensorAngle, fadeRate, diffuseRate, stepsPerFrame);
 	}
 
 }

@@ -66,7 +66,8 @@ public class AntTrailsTest {
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
 		windowSize = new Dimension(windowWidht[0], windowHeight[0]);
-		imageSize = new Dimension(windowWidht[0] * 2, windowHeight[0] * 2);
+		float k = 2;
+		imageSize = new Dimension((int)(windowWidht[0] * k), (int)(windowHeight[0] * k));
 
 		lastTime = System.currentTimeMillis();
 		isRunning = false;
@@ -77,6 +78,9 @@ public class AntTrailsTest {
 			public void invoke(long window, int key, int scancode, int action, int mods) {
 				if (action == GLFW_PRESS && key == ' ') {
 					isRunning = !isRunning;
+				}
+				if (key == GLFW_KEY_ESCAPE) {
+					glfwDestroyWindow(window);
 				}
 			}
 		});
@@ -101,13 +105,11 @@ public class AntTrailsTest {
 			particles[i++] = (float) (0.5 + (Math.sin(circleAngle) * rad) / aspect);
 			particles[i++] = (float) (Math.random() * Math.PI * 2);
 			particles[i++] = 1.0f;
-			particles[i++] = 0.0f;
-			particles[i++] = 0.2f;
 			particles[i++] = 1.0f;
+			particles[i++] = 0.15f;
+			particles[i++] = 0.3f;
 			particles[i++] = 1.0f;
 		}
-		
-		// antSpecie = new AntSpecie(50f, (float) (Math.PI / 1.5), 0, 0, 0, 0, 0);
 
 		String text = "";
 		
@@ -156,7 +158,7 @@ public class AntTrailsTest {
 		glUniform1i(4, antSpecie.sensorSize); // sensorSize
 		glUniform1f(5, antSpecie.turnSpeed); // turnSpeed
 		glUniform1f(6, antSpecie.sensorAngle); // sensorAngle
-		glUniform1i(7, isRunning ? 1 : 0);
+		glUniform1i(7, isRunning ? antSpecie.stepsPerFrame : 0);
 
 		glBindImageTexture(1, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 
@@ -168,6 +170,7 @@ public class AntTrailsTest {
 			glUniform1i(2, 1); // kernelSize
 			glUniform1f(3, antSpecie.fadeRate); // fadeRate
 			glUniform1f(4, antSpecie.diffuseRate); // diffuseRate
+//			glUniform1i(5, antSpecie.stepsPerFrame);
 
 			glBindImageTexture(0, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 

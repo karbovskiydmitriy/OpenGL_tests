@@ -10,6 +10,7 @@ layout(location = 1) uniform float delta;
 layout(location = 2) uniform int kernelSize;
 layout(location = 3) uniform float fadeRate;
 layout(location = 4) uniform float diffuseRate;
+// layout(location = 5) uniform int stepsPerFrame;
 
 void main(void)
 {
@@ -32,5 +33,5 @@ void main(void)
 	float diffuse = clamp(diffuseRate * delta, 0, 1);
 	blurredColor = imageLoad(image, coord) * (1 - diffuse) + blurredColor * diffuseRate;
 	
-	imageStore(image, coord, vec4(max(blurredColor.xyz - fadeRate * delta, 0), 1.0));
+	imageStore(image, coord, vec4(max(blurredColor.xyz - fadeRate  * delta, 0), 1.0));
 }
