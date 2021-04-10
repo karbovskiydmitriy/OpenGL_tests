@@ -21,7 +21,7 @@ public class Image {
 		int[] h = new int[1];
 		int[] comp = new int[1];
 
-		data = stbi_load(path, w, h, comp, 4);
+		data = stbi_load(path, w, h, comp, 3);
 
 		width = w[0];
 		height = h[0];

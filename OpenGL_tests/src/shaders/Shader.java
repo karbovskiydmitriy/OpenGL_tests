@@ -44,6 +44,8 @@ public class Shader {
 			} else {
 				System.out.println(glGetShaderInfoLog(shader));
 				glDeleteShader(shader);
+				
+				return 0;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

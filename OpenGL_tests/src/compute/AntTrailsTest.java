@@ -28,10 +28,6 @@ public class AntTrailsTest {
 	static float[] particles;
 	static AntSpecie antSpecie;
 
-	static int particlesProgram;
-	static int particlesVertexShader;
-	static int particlesFragmentShader;
-
 	static int fireworkComputeProgram;
 	static int fireworkComputeShader;
 	static int blurComputeProgram;
@@ -70,14 +66,13 @@ public class AntTrailsTest {
 		isRunning = false;
 
 		glfwSetKeyCallback(window, new GLFWKeyCallback() {
-
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
-				if (action == GLFW_PRESS && key == ' ') {
+				if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
 					isRunning = !isRunning;
 				}
 				if (key == GLFW_KEY_ESCAPE) {
-					glfwDestroyWindow(window);
+					glfwSetWindowShouldClose(window, true);
 				}
 			}
 		});
@@ -149,7 +144,7 @@ public class AntTrailsTest {
 
 		glBindImageTexture(1, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 
-		glDispatchCompute(particlesCount / 32, 1, 1);
+		glDispatchCompute(particlesCount / 4, 1, 1);
 
 		if (isRunning) {
 			glUseProgram(blurComputeProgram);

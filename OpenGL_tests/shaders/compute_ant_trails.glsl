@@ -2,7 +2,7 @@
 
 #define PI 3.141592653589793238462643383279
 
-layout(local_size_x = 32) in;
+layout(local_size_x = 4) in;
 
 struct Ant
 {
