@@ -3,6 +3,7 @@ package compute;
 import java.awt.Dimension;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 
 import misc.*;
 import shaders.Shader;
@@ -53,7 +54,8 @@ public class AntTrailsTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1280, 1024, "Firework test", glfwGetPrimaryMonitor(), NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(), NULL);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];

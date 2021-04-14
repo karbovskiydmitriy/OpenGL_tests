@@ -5,6 +5,7 @@ import java.awt.Point;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -47,8 +48,8 @@ public class BasicfragmentRaytracerTest {
 
 	private static void init() {
 		glfwInit();
-
-		window = glfwCreateWindow(1280, 1024, "Firework test", glfwGetPrimaryMonitor(), NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(), NULL);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];

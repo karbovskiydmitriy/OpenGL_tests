@@ -2,6 +2,8 @@ package compute;
 
 import java.awt.Dimension;
 
+import org.lwjgl.glfw.GLFWVidMode;
+
 import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
@@ -43,7 +45,8 @@ public class ParticlesTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1024, 1024, "Particles test", NULL, NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Particles test", NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);

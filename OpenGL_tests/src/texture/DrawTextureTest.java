@@ -7,6 +7,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import java.awt.Dimension;
 
+import org.lwjgl.glfw.GLFWVidMode;
+
 import types.Image;
 
 public class DrawTextureTest {
@@ -34,7 +36,8 @@ public class DrawTextureTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1280, 1024, "Compute shader example", NULL, NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Draw texture example", NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);

@@ -2,6 +2,8 @@ package compute;
 
 import java.awt.Dimension;
 
+import org.lwjgl.glfw.GLFWVidMode;
+
 import shaders.Shader;
 import types.Image;
 
@@ -42,7 +44,8 @@ public class ImageEffects {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1024, 1024, "Different image effects done in compute shader", NULL, NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Different image effects done in compute shader", NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);

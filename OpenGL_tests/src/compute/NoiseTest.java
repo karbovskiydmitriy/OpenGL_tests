@@ -2,6 +2,8 @@ package compute;
 
 import java.awt.Dimension;
 
+import org.lwjgl.glfw.GLFWVidMode;
+
 import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
@@ -37,7 +39,8 @@ public class NoiseTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1024, 1024, "Random noise", NULL, NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Random noise", NULL, NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);

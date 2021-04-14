@@ -2,6 +2,8 @@ package compute;
 
 import java.awt.Dimension;
 
+import org.lwjgl.glfw.GLFWVidMode;
+
 import shaders.Shader;
 
 import static org.lwjgl.opengl.GL.*;
@@ -50,7 +52,8 @@ public class FireworkTest {
 	private static void init() {
 		glfwInit();
 
-		window = glfwCreateWindow(1280, 1024, "Firework test", glfwGetPrimaryMonitor(), NULL);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(), NULL);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
