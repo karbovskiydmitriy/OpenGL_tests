@@ -25,12 +25,12 @@ public class AntTrailsTest {
 	static long lastTime;
 	static boolean isRunning;
 
-	static int particlesCount = 1000000;
+	static int particlesCount = 50000;
 	static float[] particles;
 	static AntSpecie antSpecie;
 
-	static int fireworkComputeProgram;
-	static int fireworkComputeShader;
+	static int antsComputeProgram;
+	static int antsComputeShader;
 	static int blurComputeProgram;
 	static int blurComputeShader;
 
@@ -55,13 +55,14 @@ public class AntTrailsTest {
 		glfwInit();
 
 		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(), NULL);
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(),
+				NULL);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
 		windowSize = new Dimension(windowWidht[0], windowHeight[0]);
-		float k = 2;
+		float k = 0.7f;
 		imageSize = new Dimension((int) (windowWidht[0] * k), (int) (windowHeight[0] * k));
 
 		lastTime = System.currentTimeMillis();
@@ -88,40 +89,31 @@ public class AntTrailsTest {
 		glViewport(0, 0, windowSize.width, windowSize.height);
 		glEnable(GL_TEXTURE_2D);
 
-		double circleRadius = 0.3;
 		float aspect = (float) windowSize.height / windowSize.width;
 
 		antSpecie = Json.load(".\\configs\\ants.json", AntSpecie.class);
 		System.out.println(antSpecie);
 
 		particles = new float[particlesCount * 8];
-		for (int i = 0; i < particlesCount * 8;) {
-			double circleAngle = Math.random() * Math.PI * 2;
-			double rad = Math.random() * circleRadius;
-			particles[i++] = (float) (0.5 + (Math.cos(circleAngle) * rad));
-			particles[i++] = (float) (0.5 + (Math.sin(circleAngle) * rad) / aspect);
-			particles[i++] = (float) (Math.random() * Math.PI * 2);
-			particles[i++] = 1.0f;
-			particles[i++] = antSpecie.color.getRed() / 255.0f;
-			particles[i++] = antSpecie.color.getGreen() / 255.0f;
-			particles[i++] = antSpecie.color.getBlue() / 255.0f;
-			particles[i++] = antSpecie.color.getAlpha() / 255.0f;
-		}
-
 		particlesBuffer = glGenBuffers();
-		glBindBuffer(GL_ARRAY_BUFFER, particlesBuffer);
-		glBufferData(GL_ARRAY_BUFFER, particles, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, particlesBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, particles, GL_DYNAMIC_DRAW);
 
 		particlesImage = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, particlesImage);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, imageSize.width, imageSize.height);
 
-		fireworkComputeProgram = glCreateProgram();
-		fireworkComputeShader = Shader.loadShader(".\\shaders\\compute_ant_trails.glsl", GL_COMPUTE_SHADER);
-		glAttachShader(fireworkComputeProgram, fireworkComputeShader);
-		glLinkProgram(fireworkComputeProgram);
-		glUseProgram(fireworkComputeProgram);
+		antsComputeProgram = glCreateProgram();
+		antsComputeShader = Shader.loadShader(".\\shaders\\compute_ant_trails.glsl", GL_COMPUTE_SHADER);
+		glAttachShader(antsComputeProgram, antsComputeShader);
+		glLinkProgram(antsComputeProgram);
+		glUseProgram(antsComputeProgram);
+
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, particlesBuffer);
+		glUniform1i(0, 1); // operation
+		glUniform1f(1, aspect); // aspect
+		glUniform1i(3, particlesCount); // count
+		glDispatchCompute(particlesCount / 4, 1, 1);
 
 		blurComputeProgram = glCreateProgram();
 		blurComputeShader = Shader.loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
@@ -134,15 +126,16 @@ public class AntTrailsTest {
 		float delta = (currentTime - lastTime) / 1000.0f;
 		lastTime = currentTime;
 
-		glUseProgram(fireworkComputeProgram);
-		glUniform1f(0, delta / (isRunning ? antSpecie.stepsPerFrame : 1)); // delta
-		glUniform1i(1, particlesCount); // count
-		glUniform1f(2, antSpecie.moveSpeed); // moveSpeed
-		glUniform1f(3, antSpecie.sensorLength); // sensorLength
-		glUniform1i(4, antSpecie.sensorSize); // sensorSize
-		glUniform1f(5, antSpecie.turnSpeed); // turnSpeed
-		glUniform1f(6, antSpecie.sensorAngle); // sensorAngle
-		glUniform1i(7, isRunning ? antSpecie.stepsPerFrame : 0);
+		glUseProgram(antsComputeProgram);
+		glUniform1i(0, 2); // operation
+		glUniform1f(2, delta / (isRunning ? antSpecie.stepsPerFrame : 1)); // delta
+		glUniform1i(3, particlesCount); // count
+		glUniform1f(4, antSpecie.moveSpeed); // moveSpeed
+		glUniform1f(5, antSpecie.sensorLength); // sensorLength
+		glUniform1i(6, antSpecie.sensorSize); // sensorSize
+		glUniform1f(7, antSpecie.turnSpeed); // turnSpeed
+		glUniform1f(8, antSpecie.sensorAngle); // sensorAngle
+		glUniform1i(9, isRunning ? antSpecie.stepsPerFrame : 0);
 
 		glBindImageTexture(1, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 
@@ -158,7 +151,7 @@ public class AntTrailsTest {
 
 			glBindImageTexture(0, particlesImage, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
 
-			glDispatchCompute(imageSize.width / 32 + 1, imageSize.height / 32 + 1, 1);
+			glDispatchCompute(imageSize.width / 2, imageSize.height / 2, 1);
 		}
 
 		glBindTexture(GL_TEXTURE_2D, particlesImage);

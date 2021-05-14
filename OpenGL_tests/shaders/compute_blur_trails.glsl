@@ -1,6 +1,6 @@
 #version 430 core
 
-#define SIZE 32
+#define SIZE 2
 
 layout(local_size_x = SIZE, local_size_y = SIZE) in;
 

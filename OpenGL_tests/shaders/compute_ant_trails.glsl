@@ -19,20 +19,42 @@ layout(std430, binding = 0) buffer entities
 
 layout(rgba32f, binding = 1) uniform image2D image;
 
-layout(location = 0) uniform float delta;
-layout(location = 1) uniform int count;
-layout(location = 2) uniform float moveSpeed;
-layout(location = 3) uniform float sensorLength;
-layout(location = 4) uniform int sensorSize;
-layout(location = 5) uniform float turnSpeed;
-layout(location = 6) uniform float sensorAngle;
-layout(location = 7) uniform int stepsPerFrame;
+layout(location = 0) uniform int operation;
+layout(location = 1) uniform float aspect;
+layout(location = 2) uniform float delta;
+layout(location = 3) uniform int count;
+layout(location = 4) uniform float moveSpeed;
+layout(location = 5) uniform float sensorLength;
+layout(location = 6) uniform int sensorSize;
+layout(location = 7) uniform float turnSpeed;
+layout(location = 8) uniform float sensorAngle;
+layout(location = 9) uniform int stepsPerFrame;
 
 ivec2 size;
+
+float random(float f)
+{
+	return fract(sin(f) * 43758.5453123);
+}
 
 float random(vec2 st)
 {
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float normrandom(float f)
+{
+	return (1 + random(f)) / 2.0;
+}
+
+void init(int id)
+{
+	float angle = random(id + 0) * PI * 2;
+	float rad = random(id + 1) * 0.22;
+	ants[id].position = vec2(0.5 + cos(angle) * rad, (0.5 + sin(angle) * rad / aspect));
+	ants[id].angle = normrandom(id + 2) * PI * 2;
+	ants[id].speed = 1.0;
+	ants[id].color = vec4(0.118, 0.235, 0.784, 1.0);
 }
 
 float sampleTrails(int id, float seekAngle)
@@ -80,7 +102,7 @@ void turn(int id)
 	}
 	else
 	{
-		ants[id].angle += (random(ants[id].position) * 2 - 1) * turnSpeed * delta;
+		ants[id].angle += (normrandom(ants[id].position.x)) * turnSpeed * delta;
 	}
 }
 
@@ -149,19 +171,26 @@ void main(void)
 	
 	if (id < count)
 	{
-		if (stepsPerFrame > 0)
-		{
-			for (int i = 0; i < stepsPerFrame; i++)
+		switch (operation) {
+		case 1:
+			init(id);
+			break;
+		case 2:
+			if (stepsPerFrame > 0)
 			{
-				move(id);
-				turn(id);
-				collide(id);
+				for (int i = 0; i < stepsPerFrame; i++)
+				{
+					move(id);
+					turn(id);
+					collide(id);
+					draw(id);
+				}
+			}
+			else
+			{
 				draw(id);
 			}
-		}
-		else
-		{
-			draw(id);
+			break;
 		}
 	}
 }
