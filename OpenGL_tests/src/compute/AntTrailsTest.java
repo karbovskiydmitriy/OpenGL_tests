@@ -25,7 +25,7 @@ public class AntTrailsTest {
 	static long lastTime;
 	static boolean isRunning;
 
-	static int particlesCount = 50000;
+	static int particlesCount = 40000;
 	static float[] particles;
 	static AntSpecie antSpecie;
 
@@ -54,15 +54,15 @@ public class AntTrailsTest {
 	private static void init() {
 		glfwInit();
 
-		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Firework test", glfwGetPrimaryMonitor(),
-				NULL);
+		long monitor = glfwGetPrimaryMonitor();
+		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
+		window = glfwCreateWindow(videoMode.width(), videoMode.height(), "Ants test", monitor, NULL);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		int[] windowWidht = new int[1];
 		int[] windowHeight = new int[1];
 		glfwGetWindowSize(window, windowWidht, windowHeight);
 		windowSize = new Dimension(windowWidht[0], windowHeight[0]);
-		float k = 0.7f;
+		float k = 1f;
 		imageSize = new Dimension((int) (windowWidht[0] * k), (int) (windowHeight[0] * k));
 
 		lastTime = System.currentTimeMillis();
@@ -91,7 +91,7 @@ public class AntTrailsTest {
 
 		float aspect = (float) windowSize.height / windowSize.width;
 
-		antSpecie = Json.load(".\\configs\\ants.json", AntSpecie.class);
+		antSpecie = Json.load("./configs/ants.json", AntSpecie.class);
 		System.out.println(antSpecie);
 
 		particles = new float[particlesCount * 8];
@@ -104,7 +104,7 @@ public class AntTrailsTest {
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, imageSize.width, imageSize.height);
 
 		antsComputeProgram = glCreateProgram();
-		antsComputeShader = Shader.loadShader(".\\shaders\\compute_ant_trails.glsl", GL_COMPUTE_SHADER);
+		antsComputeShader = Shader.loadShader("./shaders/compute_ant_trails.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(antsComputeProgram, antsComputeShader);
 		glLinkProgram(antsComputeProgram);
 		glUseProgram(antsComputeProgram);
@@ -116,7 +116,7 @@ public class AntTrailsTest {
 		glDispatchCompute(particlesCount / 4, 1, 1);
 
 		blurComputeProgram = glCreateProgram();
-		blurComputeShader = Shader.loadShader(".\\shaders\\compute_blur_trails.glsl", GL_COMPUTE_SHADER);
+		blurComputeShader = Shader.loadShader("./shaders/compute_blur_trails.glsl", GL_COMPUTE_SHADER);
 		glAttachShader(blurComputeProgram, blurComputeShader);
 		glLinkProgram(blurComputeProgram);
 	}

@@ -5,12 +5,12 @@
 		"blue" : 200,
 		"alpha" : 255
 	},
-	"moveSpeed" : 15,
-	"turnSpeed" : 10,
-	"sensorLength" : 10,
-	"sensorSize" : 2,
+	"moveSpeed" : 100,
+	"turnSpeed" : 2,
+	"sensorLength" : 40,
+	"sensorSize" : 1,
 	"sensorAngle": 0.3,
-	"fadeRate" : 13,
+	"fadeRate" : 15,
 	"diffuseRate" : 0.0022,
-	"stepsPerFrame" : 3
+	"stepsPerFrame" : 5
 }

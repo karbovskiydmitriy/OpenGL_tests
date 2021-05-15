@@ -52,7 +52,7 @@ void init(int id)
 	float angle = random(id + 0) * PI * 2;
 	float rad = random(id + 1) * 0.22;
 	ants[id].position = vec2(0.5 + cos(angle) * rad, (0.5 + sin(angle) * rad / aspect));
-	ants[id].angle = normrandom(id + 2) * PI * 2;
+	ants[id].angle = random(id + 2) * PI * 2;
 	ants[id].speed = 1.0;
 	ants[id].color = vec4(0.118, 0.235, 0.784, 1.0);
 }
@@ -102,7 +102,7 @@ void turn(int id)
 	}
 	else
 	{
-		ants[id].angle += (normrandom(ants[id].position.x)) * turnSpeed * delta;
+		ants[id].angle += (random(id * delta - id)) * turnSpeed * delta;
 	}
 }
 
